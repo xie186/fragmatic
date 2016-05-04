@@ -23,7 +23,6 @@ my $tables=0;
 my $fasta=0;
 my $fasta_mult=0; 
 my $r_plots=0;  
-my $calcfreq=0; 
 my $shuffle=0; 
 my $reps=10; 
 
@@ -186,23 +185,11 @@ foreach my $file ( @input ) {
 		    my $full = $re_full[$r];
 		    my $pattern = $re_pattern[$r];
 		    $_ =~ s/$full/$pattern/gi;
-		    if ($calcfreq == 1){ 
-		   	my $c = () = $_ =~ /$pattern/gi; 
-		    	$plainfreq[$r] or $plainfreq[$r]=0; #Initialize value in @plainfreq
-		    	$plainfreq[$r]+= $c;
-		    }  	
 		}
 		   push @frags, split(/\^/, $_); #Capture all fragments in an array
 	}
 }
-	
 
-if ($calcfreq == 1){ 
-    print "\nCalculating cut-site frequencies....\n\n"; 
-    for(my $s=0; $s < scalar(@re_full); $s++){ 
-        print "Frequency for site $re_full[$s]: $plainfreq[$s]\n";
-    }
-}
 
 print "\n...\n\n"; 
  
@@ -567,14 +554,15 @@ Mandatory Arguments
 	-i	- String. Path to input FASTA file(s) containing your genome [E.g. /home/*.fasta] 
 	-r	- String. List of restriction sites [Usage: -r G^AATTC C^CGG ...] 
 
-Concatenation Arguments
-	-c 	- Boolean. Toggle on to turn on random concatenation of contig-level assembly 
-	-s	- Integer. Provide number of replicates for concatenation. Default=10
-
 Optional Arguments
 	-o	- String. Path and prefix for output files [Usage: /path/to/radsim]
 	-f	- Bool. Toggle on to print fragments to FASTA files
 	-p	- Bool. Toggle on to skip creation of R plots 
+
+
+Concatenation Arguments [[Not yet functional]]
+	-c 	- Boolean. Toggle on to turn on random concatenation of contig-level assembly 
+	-s	- Integer. Provide number of replicates for concatenation. Default=10
 
 fragmatic.pl will create a .tsv file containing fragment lengths for recovered loci, with the number of occurances of each length.  
 
@@ -590,8 +578,7 @@ fragmatic.pl will create a .tsv file containing fragment lengths for recovered l
 	's=i'			=> \$reps,
 	't|tsv!'		=> \$tables, 
 	'f|fas!'		=> \$fasta, 
-	'p|plot!'		=> \$r_plots, 
-	'c|calc'		=> \$calcfreq, 
+	'p|plot!'		=> \$r_plots,  
 	); 
 
 
