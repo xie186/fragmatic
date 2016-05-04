@@ -160,7 +160,7 @@ foreach my $file ( @input ) {
  	my @seqs;   
 	my $count = 0; 
 	$seqs[$count]="";
-	open ( FILE, "$file" ) || die "Derp: Can't open file $file!";
+	open ( FILE, "$file" ) || die "Warning: Can't open file $file!";
 	    while (<FILE>){
 		chomp;
 		    if ($_ =~ /\>/g){   
@@ -288,7 +288,7 @@ my $templen;
             $header .= $re_plain[$names[0]-1] . "-" . $re_plain[$names[1]-1];
     	}
         #Open file for writing  
-        open (FAS, ">$outname.$header.fasta") || die "Can't open $outname.$header.fasta!\n\n";
+        open (FAS, ">$outname.$header.fasta") || die "Warning: Can't open $outname.$header.fasta!\n\n";
         
  	foreach my $seq (@{$fragseq{$key}}){
 	    $templen = length($seq);
@@ -344,7 +344,7 @@ if ($tables == 0){
 		
 	}	
 	
-	open (OUT, ">$outname.tsv") || die "Can't open $outname.tsv: $!\n";
+	open (OUT, ">$outname.tsv") || die "Warning: Can't open $outname.tsv: $!\n";
 		
 		my $header = "Fragment_length\t"; 
 		my @names; 
@@ -403,7 +403,7 @@ if ($tables == 0){
 		
 		#Open file for writing	
  
-		open ( OUT, ">$outname.$header.tsv" ) || die "Can't open $outname.$header.tsv!\n\n";
+		open ( OUT, ">$outname.$header.tsv" ) || die "Warning: Can't open $outname.$header.tsv!\n\n";
 
 		#Print header to tsv file
 		print OUT "Fragment_length\t$header\n"; 
@@ -595,6 +595,6 @@ fragmatic.pl will create a .tsv file containing fragment lengths for recovered l
 
 
 $help == 1 and die "$usage\n";
-@input or die "\nInput not specified!\n$usage\n";
+@input or die "\nWarning: Input not specified!\n$usage\n";
 	
 }

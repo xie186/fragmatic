@@ -32,7 +32,7 @@ $low or die "\n$usage\n";
 my @line; 
 my $count=0; 
 
-open (TSV, "$infile") || die "Can't open $infile!\n"; 
+open (TSV, "$infile") || die "Warning: Can't open $infile!\n"; 
 
 while (<TSV>){ 
     chomp; 

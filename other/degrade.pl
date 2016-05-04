@@ -71,7 +71,7 @@ if ($dist =~ /^u/i){
 
 #Loop through each file; create array of all fragments
 foreach my $file (@input){ 
-	open (FILE, "$file") || die "Cannot open file $file: $!\n";
+	open (FILE, "$file") || die "Warning: Cannot open file $file: $!\n";
 		while (<FILE>){ 
 			chomp; 
 			if ($_ =~ /^\>/){ 	
@@ -280,7 +280,7 @@ sub fragtable{
 	foreach(@{$array}){ 
 		$hash{length($_)}++; 
 	}
-	open ( OUT, ">$out.tsv" ) || die "Can't open $out.tsv!\n\n";
+	open ( OUT, ">$out.tsv" ) || die "Warning: Can't open $out.tsv!\n\n";
 
 	#Sort the lengths and print them, followed by the number of times they occured
 
@@ -297,7 +297,7 @@ sub fragtable{
 sub fragFASTA{ 
 	my ($array, $out) = @_; 
 	
-	open (OUT, ">$out.fas") || die "Can't open $out.fas!\n\n"; 
+	open (OUT, ">$out.fas") || die "Warning: Can't open $out.fas!\n\n"; 
 	
 	foreach (@{$array}){ 
 		print OUT ">" . length($_) . "\n$_\n";
