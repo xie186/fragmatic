@@ -10,23 +10,18 @@
 
 use strict;
 use warnings; 
-use Getopt::Long; 
 use File::Basename;
-use Statistics::R; 
+use Getopt::Std;
 
-#Command line altered variables
-my @input; 
-my @re; 
-my $outname="radsim"; 
-my $help=0; 
-my $tables=0; 
-my $fasta=0;
-my $fasta_mult=0; 
-my $r_plots=0;  
-my $shuffle=0; 
-my $reps=10; 
+my %opts;
+getopts( 'i:r:o:fh', \%opts );
 
-parseArgs(); 
+#parse command-line arguments
+my ($input, $re, $outname, $fasta) = parseArgs( \%opts ); 
+
+print "$re\n\n";
+
+my @re = split /\s+/, $re;
 
 #Initialize some local variables
 my ( $filepath, $dirpath ) = fileparse ( $outname );
@@ -140,10 +135,10 @@ print "...\n\n";
 ########################################################################
 
 #Glob the input file(s)
-@input = glob "@input";
+#@input = glob "@input";
 
 #Change directory...  
-chdir "$dirpath";
+#chdir "$dirpath";
 
 ########################################################################
 
@@ -151,14 +146,13 @@ chdir "$dirpath";
 
 print "\"Digesting\" genome at restriction sites: @re_full...\n\n";
 
-foreach my $file ( @input ) {
-	print "Reading $file... "; 
+	print "Reading $input... "; 
       
     #Open each of the files 
  	my @seqs;   
-	my $count = 0; 
+	$count = 0; 
 	$seqs[$count]="";
-	open ( FILE, "$file" ) || die "Warning: Can't open file $file!";
+	open ( FILE, "$input" ) || die "Warning: Can't open file $input!\n\n";
 	    while (<FILE>){
 			chomp;
 		    if ($_ =~ /\>/g){   
@@ -188,7 +182,7 @@ foreach my $file ( @input ) {
 		}
 		   push @frags, split(/\^/, $_); #Capture all fragments in an array
 	}
-}
+
 
 
 print "\n...\n\n"; 
@@ -297,6 +291,8 @@ my @merged;
 my %seen; 
 $count = 0; 
 
+my $tables = 0;
+
 #If user chose to write to a single table... 
 if ($tables == 0){ 
 	
@@ -403,126 +399,6 @@ if ($tables == 0){
 }
 
 
-
-########################################################################
-
-#Create figures
-
-if ($r_plots==0){
-
-print "Creating fragment distribution plots...\n\n"; 
-my $R = Statistics::R->new(); 
-	my @sizes;
-	my @freqs; 	
-	my $title; 
-	my @names; 
-	
-	$R-> startR;
-	my $pdfname = $outname . ".pdf"; 
-	$R->set('outname',$pdfname);
-	$R-> send(q'pdf(outname)');  
-	$R-> send(q'
-		#Initialize some lists
-		sizes<-list() 
-		freqs<-list() 
-		sizes<-list()
-		freqs<- list()
-		nsizes<- list()
-		nfreqs<- list()
-		titles<-list() 
-		frag.spline<-list()
-		frag.predict<-list()
-		ysum<-rep(0,10000)
-		num<-1;'); 
-	foreach my $key(keys %total){ 
-		$title = "";
-		@names = split(//, $key); #Split key to get enzyme IDs
-		#Build header and filenames 
-		if ($names[0] == 0){ 
-			$title .= "Missing sites"; 
-		}else{ 
-			$title .= $re_plain[$names[0]-1] . "-" . $re_plain[$names[1]-1];
-		}	
-		for (my $i= 1; $i <= 10000; $i++){ 
-			$total{$key}{$i} or $total{$key}{$i} = 0; 
-		}	
-		@sizes = keys %{$total{$key}};
-		@freqs = values %{$total{$key}};
-		$R->set('size',\@sizes);
-		$R->set('freq',\@freqs);
-		$R->set('title',$title);
-		$R->send(q'			
-			#Add to established lists 
-			sizes[[num]]<-as.vector(size) 
-			freqs[[num]]<-as.vector(freq) 
-			titles[[num]]<-title 	
-			nsizes[[num]]<-as.vector(size[freq>0])		
-			nfreqs[[num]]<-as.vector(freq[freq>0])
-										
-			#Fit nonlinear model; predict values for plotting
-			frag.spline[[num]]<- smooth.spline(sizes[[num]], freqs[[num]], spar=.05)		
-			frag.predict[[num]]<- predict(frag.spline[[num]],0:10000)
-			
-			#Increment fragment sums
-			ysum<- ysum + frag.predict[[num]]$y
-			
-			################################
-			#FIGURES#
-			if (titles[[num]] != "Missing sites"){
-			#Impulse plot with automatic axes
-			plot(nsizes[[num]],nfreqs[[num]],type="h", main=titles[[num]],
-			xlab="Fragment length",ylab="Frequency")
-			
-			#Impulse plot xlim=100:5000
-			plot(nsizes[[num]],nfreqs[[num]],type="h", main=titles[[num]],
-			xlab="Fragment length",ylab="Frequency",xlim=range(0:5000))
-			
-			#Impulse plot xlim=100:5000
-			plot(nsizes[[num]],nfreqs[[num]],type="h", main=titles[[num]],
-			xlab="Fragment length",ylab="Frequency",xlim=range(0:1000))
-									
-			}			
-												
-			num<-num+1'); 
-	}	
-		
-	$R->send(q'
-		num<-num-1;
-		colors<-rainbow(num) 
-		x<-0:10000
-		t<-unlist(titles)
-		
-		#Total fragment figures (no axis set) 
-		plot(x,ysum,type="l",main="Total recovered fragments",
-		xlab="Fragment size", ylab="Frequency",lwd=1.5,xlim=range(0:10000))
-		for (i in 1:num){
-			lines(frag.predict[[i]],col=colors[[i]],lwd=1.5)
-		}
-		legend("topright", c("Total fragments", t), col=c("black",colors),lwd=1.5)
-		
-		#Total fragment figures (x axis 0:5000) 
-		plot(x,ysum,type="l",main="Total recovered fragments",
-		xlab="Fragment size", ylab="Frequency",xlim=range(0:5000),lwd=1.5)
-		for (i in 1:num){
-			lines(frag.predict[[i]],col=colors[[i]],lwd=1.5)
-		}
-		legend("topright", c("Total fragments", t), col=c("black",colors),lwd=1.5)
-		
-		#Total fragment figures (x axis 0:1000) 
-		plot(x,ysum,type="l",main="Total recovered fragments",
-		xlab="Fragment size", ylab="Frequency",xlim=range(0:1000),lwd=1.5)
-		for (i in 1:num){
-			lines(frag.predict[[i]],col=colors[[i]],lwd=1.5)
-		}
-		legend("topright", c("Total fragments", t), col=c("black",colors),lwd=1.5)
-		
-		dev.off()');
-			
-
-$R->stopR();
-
-}
-
 print "...\n\nIn silico digest complete\n\n"; 
 exit;  
 
@@ -537,52 +413,43 @@ exit;
 #Subroutine to parse command-line arguments
 sub parseArgs{
 
+my($args) = @_;
+my %opts = %$args;
+
 my $usage="\n
 Script: fragmatic.pl
 
 Primary Author: Tyler K. Chafin - tkchafin\@uark.edu
 
-Last Modified: 13 October 2015
+Last Modified: 29 Jul 16
 
 This script was created to simulate the digestion/ fragmentation of genomic DNA sequences with restriction enzymes as would be used in library preparation for a RAD-type reduced-representation genomic approach. It currently supposrts an indeterminate number of restriction enzymes, as well as degeneracy in restriction sites. 
 
 
-USAGE: $0 -i /path/to/fasta_file(s) -r G^AATTC C^CGG... [-o /home/out][-t][-f][-m][-p]  
+USAGE: $0 -i /path/to/fasta_file( -r \"G^AATTC C^CGG...\" [-o /home/out][-t][-f][-m][-p]  
 
 
 Mandatory Arguments
-	-i	- String. Path to input FASTA file(s) containing your genome [E.g. /home/*.fasta] 
-	-r	- String. List of restriction sites [Usage: -r G^AATTC C^CGG ...] 
+	-i	- String. Path to input FASTA file containing your genome [E.g. /home/genome.fasta] 
+	-r	- String. List restriction sites in quotation marks [Usage: -r \"G^AATTC C^CGG ...\"] 
 
 Optional Arguments
 	-o	- String. Path and prefix for output files [Usage: /path/to/radsim]
 	-f	- Bool. Toggle on to print fragments to FASTA files
-	-p	- Bool. Toggle on to skip creation of R plots 
-
-
-Concatenation Arguments [[Not yet functional]]
-	-c 	- Boolean. Toggle on to turn on random concatenation of contig-level assembly 
-	-s	- Integer. Provide number of replicates for concatenation. Default=10
-
+	-h	- Bool. Display this help message 
+	
 fragmatic.pl will create a .tsv file containing fragment lengths for recovered loci, with the number of occurances of each length.  
 
 ";
 
-	my $result = GetOptions
-	( 
-	'help|h!'		=> \$help, 
-	'input|i=s{1,}'		=> \@input,
-	'out|o=s'		=> \$outname,
-	'r|re=s{1,}'		=> \@re, 
-	'c!'			=> \$shuffle, 
-	's=i'			=> \$reps,
-	't|tsv!'		=> \$tables, 
-	'f|fas!'		=> \$fasta, 
-	'p|plot!'		=> \$r_plots,  
-	); 
+my $i = $opts{i} or die "Input not specified!\n\n$usage\n";
+my $r = $opts{r} or die "RE sites not specified!\n\n$usage\n";
+my $o = $opts{o} || "sim";
+my $f = $opts{f} || 0;
+my $h = $opts{h} || 0;
 
+$h == 1 and die "$usage\n";
 
-$help == 1 and die "$usage\n";
-@input or die "\nWarning: Input not specified!\n$usage\n";
+return($i, $r, $o, $f);
 	
 }

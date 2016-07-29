@@ -1,0 +1,91 @@
+
+
+read.table(file=arg1,
+	foreach my $key(keys %total){ 
+		$title = "";
+		@names = split(//, $key); #Split key to get enzyme IDs
+		#Build header and filenames 
+		if ($names[0] == 0){ 
+			$title .= "Missing sites"; 
+		}else{ 
+			$title .= $re_plain[$names[0]-1] . "-" . $re_plain[$names[1]-1];
+		}	
+		for (my $i= 1; $i <= 10000; $i++){ 
+			$total{$key}{$i} or $total{$key}{$i} = 0; 
+		}	
+		@sizes = keys %{$total{$key}};
+		@freqs = values %{$total{$key}};
+		$R->set('size',\@sizes);
+		$R->set('freq',\@freqs);
+		$R->set('title',$title);
+		$R->send(q'			
+			#Add to established lists 
+			sizes[[num]]<-as.vector(size) 
+			freqs[[num]]<-as.vector(freq) 
+			titles[[num]]<-title 	
+			nsizes[[num]]<-as.vector(size[freq>0])		
+			nfreqs[[num]]<-as.vector(freq[freq>0])
+										
+			#Fit nonlinear model; predict values for plotting
+			frag.spline[[num]]<- smooth.spline(sizes[[num]], freqs[[num]], spar=.05)		
+			frag.predict[[num]]<- predict(frag.spline[[num]],0:10000)
+			
+			#Increment fragment sums
+			ysum<- ysum + frag.predict[[num]]$y
+			
+			################################
+			#FIGURES#
+			if (titles[[num]] != "Missing sites"){
+			#Impulse plot with automatic axes
+			plot(nsizes[[num]],nfreqs[[num]],type="h", main=titles[[num]],
+			xlab="Fragment length",ylab="Frequency")
+			
+			#Impulse plot xlim=100:5000
+			plot(nsizes[[num]],nfreqs[[num]],type="h", main=titles[[num]],
+			xlab="Fragment length",ylab="Frequency",xlim=range(0:5000))
+			
+			#Impulse plot xlim=100:5000
+			plot(nsizes[[num]],nfreqs[[num]],type="h", main=titles[[num]],
+			xlab="Fragment length",ylab="Frequency",xlim=range(0:1000))
+									
+			}			
+												
+			num<-num+1'); 
+	}	
+		
+	$R->send(q'
+		num<-num-1;
+		colors<-rainbow(num) 
+		x<-0:10000
+		t<-unlist(titles)
+		
+		#Total fragment figures (no axis set) 
+		plot(x,ysum,type="l",main="Total recovered fragments",
+		xlab="Fragment size", ylab="Frequency",lwd=1.5,xlim=range(0:10000))
+		for (i in 1:num){
+			lines(frag.predict[[i]],col=colors[[i]],lwd=1.5)
+		}
+		legend("topright", c("Total fragments", t), col=c("black",colors),lwd=1.5)
+		
+		#Total fragment figures (x axis 0:5000) 
+		plot(x,ysum,type="l",main="Total recovered fragments",
+		xlab="Fragment size", ylab="Frequency",xlim=range(0:5000),lwd=1.5)
+		for (i in 1:num){
+			lines(frag.predict[[i]],col=colors[[i]],lwd=1.5)
+		}
+		legend("topright", c("Total fragments", t), col=c("black",colors),lwd=1.5)
+		
+		#Total fragment figures (x axis 0:1000) 
+		plot(x,ysum,type="l",main="Total recovered fragments",
+		xlab="Fragment size", ylab="Frequency",xlim=range(0:1000),lwd=1.5)
+		for (i in 1:num){
+			lines(frag.predict[[i]],col=colors[[i]],lwd=1.5)
+		}
+		legend("topright", c("Total fragments", t), col=c("black",colors),lwd=1.5)
+		
+		dev.off()');
+			
+
+$R->stopR();
+
+}
