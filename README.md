@@ -44,11 +44,16 @@ Please also note that a highly fragmentary assembly will result in many spurious
 ##Outputs 
 The standard output file is a tab-delimited table of integers representing the number of fragments of each type for a given fragment size. Using the example above, this table might look like this:
 
-Fragment_length    Missing_sites    GAATTC-GAATTC    GAATTC-CCGG CCGG-CCGG    Sum
-10                    0                0                 23          373      396
-11                    0                1                 63          384      448
-...
-2846                  0                0                 0            1        1
+Fragment_length   | Missing_sites  |   GAATTC-GAATTC |   GAATTC-CCGG |CCGG-CCGG  |  Sum
+--------------------------------------------------------------------------------------
+10                |    0           |     0          |      23       |   373     |  396
+---------------------------------------------------------------------------------------
+11                |   0            |     1          |       63      |   384     |  448
+---------------------------------------------------------------------------------------
+...               |                |                |               |           |
+---------------------------------------------------------------------------------------
+2846              |    0           |     0          |       0       |     1     |   1
+---------------------------------------------------------------------------------------
 
 You can also output all fragments to fasta files, which will be named according to the end-termination of each fragment (e.g. $prefix.CCGG-CCGG.fasta will contain fragments which were flanked on both ends by an MspI restriction site).
 
