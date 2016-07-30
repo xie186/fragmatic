@@ -16,8 +16,9 @@ This software requires Perl5 with standard modules to be installed. It assumes t
 
 ###Usage
 The help menu can be displayed using the "-h" argument:
-    ./fragmatic.pl -h
-
+     '''bash
+     ./fragmatic.pl -h
+    ```
 The mandatory arguments are -i [input FASTA file] and -r [restriction sites]. Restriction sites are provided as a list surrounded by quotation marks, and can be any number of sites and include degenerate bases. Restriction sites containing degenerate bases will be expanded (e.g. the site for BsrFI (RCCGGY) will be expanded to ACCGGC, ACCGGT, GCCGGC, GCCGGT). You must include a caret symbol (^) indicating the cleavage location in the restriction site. To call the program using EcoRI and MspI, on an input file called "genome.fasta" located in the users home directory: 
 
     ./fragmatic.pl -i $HOME/genome.fasta -r "G^AATTC C^CGG"
