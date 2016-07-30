@@ -78,4 +78,4 @@ This will produce a PDF file containing several impulse plots of the resulting f
 ###License
 This software is provided for free: you can redistribute it and/or modify it under the terms of the GNU Public License as published by the Free Software Foundation. You should have received a copy of the GNU Public License with the software. If not, see: www.gnu.org/licenses
 
-The author claims no liability or resposibility for the functionality of this software.
+The author claims nor liability or resposibility for the functionality of this software. 
