@@ -43,7 +43,7 @@ Please also note that a highly fragmentary assembly will result in many spurious
 
 ##-------------------------
 
-##Outputs 
+###Outputs 
 The standard output file is a tab-delimited table of integers representing the number of fragments of each type for a given fragment size. Using the example above, this table might look like this:
 
 Fragment_length   | Missing_sites  |   GAATTC-GAATTC |   GAATTC-CCGG |CCGG-CCGG  |  Sum
