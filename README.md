@@ -16,9 +16,9 @@ This software requires Perl5 with standard modules to be installed. It assumes t
 
 ###Usage
 The help menu can be displayed using the "-h" argument:
-     '''bash
+
      ./fragmatic.pl -h
-    ```
+
 The mandatory arguments are -i [input FASTA file] and -r [restriction sites]. Restriction sites are provided as a list surrounded by quotation marks, and can be any number of sites and include degenerate bases. Restriction sites containing degenerate bases will be expanded (e.g. the site for BsrFI (RCCGGY) will be expanded to ACCGGC, ACCGGT, GCCGGC, GCCGGT). You must include a caret symbol (^) indicating the cleavage location in the restriction site. To call the program using EcoRI and MspI, on an input file called "genome.fasta" located in the users home directory: 
 
     ./fragmatic.pl -i $HOME/genome.fasta -r "G^AATTC C^CGG"
@@ -32,6 +32,7 @@ Additional options are:
 
 ###Input file
 The input file should be in standard FASTA format:
+
     >Scaffold1
     AGTAGATGTCGATCGATCGTACGTCG...
 
@@ -66,6 +67,7 @@ A randomly generated example sequence is located in the example/ directory, as w
     ./fragmatic.pl -i example/test.fasta -o example/sim -r "G^AATTC C^CGG" -f
 
 There is also an R script included in the scripts/ directory which can generate some plots:
+
     Rscript scripts/frag_plots.R example/sim.tsv
 
 This will produce a PDF file containing several impulse plots of the resulting fragment distributions. Use these plots to qualitatively scan potential size selection ranges, trying to avoid any range likely containing a highly locus within a highly repetitive region. You can also calculate the number of loci within a given size range, and the relative proportion of sequenceable fragments, by just loading the .tsv file into excel and using the SUM function on your range and column(s) of interest. 
