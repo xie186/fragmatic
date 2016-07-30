@@ -47,13 +47,9 @@ The standard output file is a tab-delimited table of integers representing the n
 Fragment_length   | Missing_sites  |   GAATTC-GAATTC |   GAATTC-CCGG |CCGG-CCGG  |  Sum
 ------------------|----------------|-----------------|---------------|-----------|--------
 10                |    0           |     0           |      23       |   373     |  396
-------------------|----------------|-----------------|---------------|-----------|--------
 11                |   0            |     1           |       63      |   384     |  448
-------------------|----------------|-----------------|---------------|-----------|---------
 ...               |                |                 |               |           |
-------------------|----------------|-----------------|---------------|-----------|----------
 2846              |    0           |     0           |       0       |     1     |   1
-------------------|----------------|-----------------|---------------|-----------|----------
 
 You can also output all fragments to fasta files, which will be named according to the end-termination of each fragment (e.g. $prefix.CCGG-CCGG.fasta will contain fragments which were flanked on both ends by an MspI restriction site).
 
