@@ -70,7 +70,9 @@ There is also an R script included in the scripts/ directory which can generate 
 
     Rscript scripts/frag_plots.R example/sim.tsv
 
-This will produce a PDF file containing several impulse plots of the resulting fragment distributions. Use these plots to qualitatively scan potential size selection ranges, trying to avoid any range likely containing a highly locus within a highly repetitive region. You can also calculate the number of loci within a given size range, and the relative proportion of sequenceable fragments, by just loading the .tsv file into excel and using the SUM function on your range and column(s) of interest. 
+This will produce a PDF file containing several impulse plots of the resulting fragment distributions. Keep in mind that these plots are not very realistic for this randomly generated example sequence, so I have also icluded some sample plots for Danio rerio digested with PstI and MspI for reference at example/danio.pdf.
+
+Use these plots to qualitatively scan potential size selection ranges, trying to avoid any range likely containing a highly locus within a highly repetitive region. You can also calculate the number of loci within a given size range, and the relative proportion of sequenceable fragments, by just loading the .tsv file into excel and using the SUM function on your range and column(s) of interest. 
 
 
 ##-------------------------
@@ -78,4 +80,4 @@ This will produce a PDF file containing several impulse plots of the resulting f
 ###License
 This software is provided for free: you can redistribute it and/or modify it under the terms of the GNU Public License as published by the Free Software Foundation. You should have received a copy of the GNU Public License with the software. If not, see: www.gnu.org/licenses
 
-The author claims nor liability or resposibility for the functionality of this software. 
+The author claims no liability nor resposibility for the functionality of this software. 
