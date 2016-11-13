@@ -23,15 +23,15 @@ impulsePlot <- function(x) {
 		
 	#Impulse plot xlim=100:5000
 	plot(table[[x]],table$Fragment_length,type="h", main=x,
-	xlab="Fragment length",ylab="Frequency",xlim=range(0:5000))
+	xlab="Fragment length",ylab="Frequency",ylim=c(0,5000))
 
 	#Impulse plot xlim=100:5000
 	plot(table[[x]],table$Fragment_length,type="h", main=x,
-	xlab="Fragment length",ylab="Frequency",xlim=range(0:1000))
+	xlab="Fragment length",ylab="Frequency",ylim=c(0,1000))
 	
 	#Impulse plot xlim=100:5000
 	plot(table[[x]],table$Fragment_length,type="h", main=x,
-	xlab="Fragment length",ylab="Frequency",xlim=range(0:500))
+	xlab="Fragment length",ylab="Frequency",ylim=c(0,500))
 	
 }	
 
