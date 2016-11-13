@@ -14,7 +14,6 @@ print(paste("Reading from file: ", args[1]))
 
 table<-read.table(file=args[1], header=T);
 
-table<-read.table(file="sim.tsv",header=T);
 print("Creating plots...");
 
 impulsePlot <- function(x) {
