@@ -52,6 +52,6 @@ cat $file | awk '{
 	}
 }END{
 	print "  Number of sequence-able fragment: "loc; 
-	print "  Proportion of sequence-able fragments: " sum
+	print "  Proportion of sequence-able fragments: " loc/sum
 }' 
 printf "\n\n"
