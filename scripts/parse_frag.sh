@@ -46,8 +46,8 @@ printf "\nInput: \n  Parsing column <$name> in file <$file>. \n  Size selection:
 echo "-----------------------------------------------"
 printf "Result: \n"
 cat $file | awk '{
-	if ($1 > 250 && $1 < 350){ 
-		loc+=$4; 
+	if ($1 > "'"$from"'" && $1 < "'"$to"'"){ 
+		loc+=$"'"$col"'"; 
 		sum+=$6
 	}
 }END{
