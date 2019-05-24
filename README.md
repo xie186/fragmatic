@@ -9,7 +9,7 @@ Contact: tkchafin@uark.edu
 
 ### Installation
 
-This software requires Perl5 with standard modules to be installed. It assumes the perl binary to be present at /usr/bin/perl. If this is not the location of the perl binary, please edit the first line (following "#!") in fragmatic.pl accordingly. 
+This software requires Perl5 with standard modules to be installed. It assumes the perl binary to be present at /usr/bin/perl. 
 
 
 ## -------------------------
