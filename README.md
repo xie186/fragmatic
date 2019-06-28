@@ -1,4 +1,7 @@
 # fragmatic
+
+> Note: I (@xie186) modified this program to output the genomic coordinates of the fragments. 
+
 Simple program for in silico restriction digest of genomic sequences, to simulate RAD-family NGS library prep methods
 
 Author: Tyler K. Chafin
