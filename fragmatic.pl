@@ -143,6 +143,7 @@ print "...\n\n";
 ########################################################################
 
 #In silico digest based on pattern replacement
+open (OUTBED, ">$outname.coordinates.tsv") || die "Warning: Can't open $outname.tsv: $!\n";
 
 print "\"Digesting\" genome at restriction sites: @re_full...\n\n";
 
@@ -150,14 +151,18 @@ print "\"Digesting\" genome at restriction sites: @re_full...\n\n";
       
     #Open each of the files 
  	my @seqs;   
+        my @chrom;
 	$count = 0; 
 	$seqs[$count]="";
+        
 	open ( FILE, "$input" ) || die "Warning: Can't open file $input!\n\n";
 	    while (<FILE>){
 			chomp;
 		    if ($_ =~ /\>/g){   
 		            $count++; 
 			    $seqs[$count]=""; 
+                            s/>//;
+                            push @chrom, (split(/\s+/, $_))[0];
 			    next;
 		    }
 	     
@@ -169,18 +174,25 @@ print "\"Digesting\" genome at restriction sites: @re_full...\n\n";
         print "$count contig\(s\) found\n";
 	    close FILE;
 	
-	foreach (@seqs){ 
+	for (my $i = 0; $i<@seqs; ++$i){ 
 	#print "$_\n"; 
-		#Make sure entry contains sequences...
-		next unless $_ =~ /[A-Za-z]+/gi; 
-		#Add flanking delimiters to restriction sites
-		foreach (my $r=0; $r < scalar(@re_full); $r++){ 
-		    #print "Replacing $re_full[$r] with $re_pattern[$r]\n"; 
-		    my $full = $re_full[$r];
-		    my $pattern = $re_pattern[$r];
-		    $_ =~ s/$full/$pattern/gi;
-		}
-		   push @frags, split(/\^/, $_); #Capture all fragments in an array
+	    #Make sure entry contains sequences...
+	    next unless $seqs[$i] =~ /[A-Za-z]+/gi; 
+	    #Add flanking delimiters to restriction sites
+	    foreach (my $r=0; $r < scalar(@re_full); $r++){ 
+	        #print "Replacing $re_full[$r] with $re_pattern[$r]\n"; 
+	        my $full = $re_full[$r];
+	        my $pattern = $re_pattern[$r];
+	        $seqs[$i] =~ s/$full/$pattern/gi;
+	    }
+	    my @frag = split(/\^/, $seqs[$i]); #Capture all fragments in an array   
+            my $start = 0;
+            foreach my $frag(@frag){
+                my $tem_stt = $start + 1;
+                my $tem_end = $tem_stt + (length $frag) -1;
+                $start = $tem_end;
+                print OUTBED "$chrom[$i]\t$tem_stt\t$tem_end\tFragment\n";
+            }
 	}
 
 
