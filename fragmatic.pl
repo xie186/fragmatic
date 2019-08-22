@@ -154,7 +154,7 @@ print "\"Digesting\" genome at restriction sites: @re_full...\n\n";
         my @chrom;
 	$count = 0; 
 	$seqs[$count]="";
-        
+        $chrom[$count] = "";
 	open ( FILE, "$input" ) || die "Warning: Can't open file $input!\n\n";
 	    while (<FILE>){
 			chomp;
@@ -162,7 +162,8 @@ print "\"Digesting\" genome at restriction sites: @re_full...\n\n";
 		            $count++; 
 			    $seqs[$count]=""; 
                             s/>//;
-                            push @chrom, (split(/\s+/, $_))[0];
+                            $chrom[$count] = (split(/\s+/, $_))[0];
+                            #print split(/\s+/, $_)[0], "\n";
 			    next;
 		    }
 	     
@@ -170,11 +171,11 @@ print "\"Digesting\" genome at restriction sites: @re_full...\n\n";
 			#print "$_\n"; 
 			$seqs[$count] .= $_;  #Read file line by line and build sequence as a string       
 	    }
-	    
+	#print join("\t", @chrom), "\n"; 
         print "$count contig\(s\) found\n";
 	    close FILE;
 	
-	for (my $i = 0; $i<@seqs; ++$i){ 
+	for (my $i = 0; $i<=@seqs; ++$i){ 
 	#print "$_\n"; 
 	    #Make sure entry contains sequences...
 	    next unless $seqs[$i] =~ /[A-Za-z]+/gi; 
